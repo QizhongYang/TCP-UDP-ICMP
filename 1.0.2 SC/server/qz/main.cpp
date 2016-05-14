@@ -109,12 +109,12 @@ int JoyStick::readJS(void routine(int,siginfo_t* info,void *myact))
             break;
         }
     }
-    for(int i=0;i<15;i++)
+    /*for(int i=0;i<15;i++)
         cerr<<joy_msg.buttons[i]<<' ';
     cerr<<endl;
     for(int i=0;i<6;i++)
         cerr<<joy_msg.axes[i]<<' ';
-    cerr<<endl;
+    cerr<<endl;*/
 
     work = true;
     return 1;
@@ -134,9 +134,9 @@ void act(int sig)
 {
     if( SIGUSR1 == sig)
         cerr<<"Disconnected"<<endl;
-    else if(SIGUSR2 == sig)
-        cerr<<"Connected"<<endl;
-    else if(SIGINT){
+    //else if(SIGUSR2 == sig)
+    //    cerr<<"Connected"<<endl;
+    else if(SIGINT == sig){
         close(socket_fd);
         alive = false;
         printf("exit\n");
@@ -179,11 +179,11 @@ static const struct option long_options[] = {
 
 int main(int argc, char *argv[])
 {
-    char *ip   = "192.168.8.103";
-    char *name = "www.google.com";
+    char *ip,*name;
     struct hostent *host = NULL;
-    int index,c;
-    bool selectIpOrName = true;
+    int index,c, selectIpOrName = 0;
+    
+cerr<<getpid()<<endl;
 
     while(1){
         c = getopt_long(argc, argv, short_options, long_options, &index);
@@ -196,11 +196,11 @@ int main(int argc, char *argv[])
             break;
         case 'i':
             ip = optarg;
-            selectIpOrName = true;
+            selectIpOrName = 1;
             break;
         case 'n':
             name = optarg;
-            selectIpOrName = false;
+            selectIpOrName = 2;
             break;
         case 'h':
             usage(stdout,argv);
@@ -219,22 +219,30 @@ int main(int argc, char *argv[])
 
     memset(&addr_client, 0, sizeof(addr_client));
     addr_client.sin_family = AF_INET;
-    if(selectIpOrName){
-        addr_client.sin_addr.s_addr = inet_addr(ip);//htonl(192.168.8.103);
+switch(selectIpOrName){
+case 0:
+	addr_client.sin_addr.s_addr =  inet_addr("192.168.8.102");
         ip = inet_ntoa(addr_client.sin_addr);
-        printf("dest ip %s\n",ip);
-    }else{
-        host = gethostbyname(name);
+        printf("Default dest ip %s\n",ip);
+	break;
+case 1:
+	addr_client.sin_addr.s_addr = inet_addr(ip);//htonl(192.168.8.103);
+        ip = inet_ntoa(addr_client.sin_addr);
+        printf("Dest ip %s\n",ip);
+	break;
+case 2:
+	host = gethostbyname(name);
         addr_client.sin_addr=*((struct in_addr *)host->h_addr);
         ip = inet_ntoa(addr_client.sin_addr);
-        printf("dest ip %s\n",ip);
-    }
+        printf("Dest ip %s\n",ip);
+	break;
+}
     addr_client.sin_port = htons(8888);
 
     bind(socket_fd,(struct sockaddr*)&addr_server, sizeof(addr_server));
 
 
-    cerr<<getpid()<<endl;
+    
     signal(SIGUSR1,act);
     signal(SIGUSR2,act);
     signal(SIGINT, act);

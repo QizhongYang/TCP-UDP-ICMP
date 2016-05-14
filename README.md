@@ -1,16 +1,29 @@
 # TCP-UDP-ICMP
-mkdir -p ~/Desktop/ws/src
-cd ~/Desktop/ws/src/
-catkin_init_workspace
-cd ..
-catkin_make
-sudo gedit ~/.bashrc
-source ~/Desktop/ws/devel/setup.bash
-rospack profile 
+For  client :
+ chmod +x client.sh clientinit.sh
+ 
+ ./clientinit.sh   #just once 
 
+ sudo ./client.sh	
 
-cd ~/Desktop/ws/src 
-catkin_create_pkg mypackage
+ if want camero
+ 
+ ./client/camera/client
+ 
+For  server :
 
+ vim server.sh
+ 
+ change ip = ?
+ 
+ save and close
+ 
+ chmod +x  ./server.sh
 
-g++ -o icmp -main.cpp -l pthread
+ sudo ./server.sh
+ 
+ if want camero 
+
+ ./server/camera/server -i 'your client ip'
+
+ 
