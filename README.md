@@ -1,10 +1,9 @@
 # TCP-UDP-ICMP
 For  client :
- chmod +x client.sh clientinit.sh
- 
- ./clientinit.sh   #just once 
 
- sudo ./client.sh	
+ chmod +x client.sh
+
+ ./client.sh	
 
  if want camero
  
@@ -20,10 +19,9 @@ For  server :
  
  chmod +x  ./server.sh
 
- sudo ./server.sh
+ ./server.sh
  
  if want camero 
 
  ./server/camera/server -i 'your client ip'
 
- 
