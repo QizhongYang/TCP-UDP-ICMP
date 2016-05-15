@@ -20,6 +20,6 @@ sleep 3
 
 cd ..
 cd ./icmp 
-./icmp  $ip
+sudo ./icmp  $ip
 
  
